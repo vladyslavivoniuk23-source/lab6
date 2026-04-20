@@ -1,55 +1,55 @@
-const boardElement = document.getElementById('game-board');
-let boardState = []; 
+Let lvl;
+let moves = 0;
+let lastPos = null;
+const board = document.getElementById('game-board');
 
+fetch('data/levels.json')
+    .then(response => response.json())
+    .then(data => {
+        lvl = data[Math.floor(Math.random() * data.length)];
+        document.getElementById('lvl-id').textContent = lvl.id;
+        document.getElementById('target-moves').textContent = lvl.target;
+        init();
+    });
 
-function initGame(matrix) {
-    boardState = matrix;
-    renderBoard();
-}
-
-
-function renderBoard() {
-    boardElement.innerHTML = ''; 
-    for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 5; c++) {
-            const cell = document.createElement('div');
-            cell.className = `cell ${boardState[r][c] === 1 ? 'on' : 'off'}`;
-            cell.addEventListener('click', () => handleCellClick(r, c));
-            boardElement.appendChild(cell);
+function init() {
+    board.innerHTML = ''; 
+    for (let i = 0; i < 5; i++) {
+        for (let j = 0; j < 5; j++) {
+            const cell = document.createElement('button');
+            cell.className = `cell ${lvl.matrix[i][j] ? 'on' : 'off'}`;
+            cell.dataset.pos = `${i}-${j}`;
+            cell.onclick = () => click(i, j);
+            board.appendChild(cell);
         }
     }
 }
 
-
-function handleCellClick(r, c) {
-    toggle(r, c);       
-    toggle(r - 1, c);   
-    toggle(r + 1, c);   
-    toggle(r, c - 1);   
-    toggle(r, c + 1);   
-    renderBoard();
-    checkWin();
-}
-
-function toggle(r, c) {
-    if (r >= 0 && r < 5 && c >= 0 && c < 5) {
-        boardState[r][c] = boardState[r][c] === 1 ? 0 : 1;
+function click(i, j) {
+    const pos = `${i}-${j}`;
+    if (lastPos === pos) {
+        moves--;
+        lastPos = null;
+    } else {
+        moves++;
+        lastPos = pos;
+    }
+    
+    document.getElementById('move-count').textContent = moves;
+    toggle(i, j);
+    
+    const offCells = document.querySelectorAll('.off');
+    if (offCells.length === 0) {
+        document.getElementById('status').textContent = "ПЕРЕМОГА! ВСЕ УКВІМКНЕНО";
     }
 }
 
-function checkWin() {
-    const isWin = boardState.every(row => row.every(cell => cell === 0));
-    if (isWin) alert('Вітаємо! Ви перемогли!');
+function toggle(i, j) {
+    [[i,j], [i-1,j], [i+1,j], [i,j-1], [i,j+1]].forEach(([y, x]) => {
+        if (y >= 0 && y < 5 && x >= 0 && x < 5) {
+            const el = document.querySelector(`[data-pos="${y}-${x}"]`);
+            el.classList.toggle('on');
+            el.classList.toggle('off');
+        }
+    });
 }
-
-
-
-const matrixA = [
-    [0, 1, 0, 0, 1],
-    [1, 0, 1, 1, 1],
-    [1, 0, 1, 0, 1],
-    [0, 0, 1, 0, 0],
-    [1, 1, 1, 1, 1]
-];
-
-initGame(matrixA);
