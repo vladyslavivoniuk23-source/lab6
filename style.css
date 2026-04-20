@@ -1,6 +1,6 @@
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(5, 50px);
+    grid-template-columns: repeat(5, 55px); /* трохи збільшив для зручності */
     gap: 5px;
     margin-top: 20px;
 }
@@ -13,4 +13,4 @@
 }
 
 .cell.on { background-color: #ffcc00; }  
-.cell.off { background-color: #333; }    
+.cell.off { background-color: #333; }
