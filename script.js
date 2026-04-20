@@ -1,55 +1,50 @@
-Let lvl;
-let moves = 0;
-let lastPos = null;
-const board = document.getElementById('game-board');
+let currentGrid = [];
+let levelsData = [];
 
-fetch('data/levels.json')
-    .then(response => response.json())
-    .then(data => {
-        lvl = data[Math.floor(Math.random() * data.length)];
-        document.getElementById('lvl-id').textContent = lvl.id;
-        document.getElementById('target-moves').textContent = lvl.target;
-        init();
-    });
+async function init() {
+    const response = await fetch('data/levels.json');
+    const data = await response.json();
+    levelsData = data.levels;
+    loadLevel(0);
+}
 
-function init() {
-    board.innerHTML = ''; 
-    for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 5; j++) {
-            const cell = document.createElement('button');
-            cell.className = `cell ${lvl.matrix[i][j] ? 'on' : 'off'}`;
-            cell.dataset.pos = `${i}-${j}`;
-            cell.onclick = () => click(i, j);
+function loadLevel(index) {
+    currentGrid = JSON.parse(JSON.stringify(levelsData[index].grid));
+    render();
+}
+
+function toggle(r, c) {
+    if (r >= 0 && r < 5 && c >= 0 && c < 5) {
+        currentGrid[r][c] = currentGrid[r][c] === 1 ? 0 : 1;
+    }
+}
+
+function handleCellClick(r, c) {
+    toggle(r, c);     // Клік
+    toggle(r - 1, c); // Вгору
+    toggle(r + 1, c); // Вниз
+    toggle(r, c - 1); // Вліво
+    toggle(r, c + 1); // Вправо
+    render();
+    checkWin();
+}
+
+function render() {
+    const board = document.getElementById('game-board');
+    board.innerHTML = '';
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            const cell = document.createElement('div');
+            cell.className = `cell ${currentGrid[r][c] === 1 ? 'on' : 'off'}`;
+            cell.onclick = () => handleCellClick(r, c);
             board.appendChild(cell);
         }
     }
 }
 
-function click(i, j) {
-    const pos = `${i}-${j}`;
-    if (lastPos === pos) {
-        moves--;
-        lastPos = null;
-    } else {
-        moves++;
-        lastPos = pos;
-    }
-    
-    document.getElementById('move-count').textContent = moves;
-    toggle(i, j);
-    
-    const offCells = document.querySelectorAll('.off');
-    if (offCells.length === 0) {
-        document.getElementById('status').textContent = "ПЕРЕМОГА! ВСЕ УКВІМКНЕНО";
-    }
+function checkWin() {
+    const win = currentGrid.every(row => row.every(cell => cell === 0));
+    document.getElementById('status').textContent = win ? "Ви перемогли!" : "";
 }
 
-function toggle(i, j) {
-    [[i,j], [i-1,j], [i+1,j], [i,j-1], [i,j+1]].forEach(([y, x]) => {
-        if (y >= 0 && y < 5 && x >= 0 && x < 5) {
-            const el = document.querySelector(`[data-pos="${y}-${x}"]`);
-            el.classList.toggle('on');
-            el.classList.toggle('off');
-        }
-    });
-}
+init();
