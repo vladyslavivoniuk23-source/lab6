@@ -2,50 +2,24 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Lab 6 - Lights On</title>
+    <title>Lab 6 - Lights On 5x5</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; color: #333; }
-        
-        /* Сітка гри */
-        #game-board { 
-            display: inline-grid; 
-            grid-template-columns: repeat(5, 50px); 
-            gap: 5px; 
-            margin-top: 20px;
-        }
-
-        /* Клітинки */
-        .cell { 
-            width: 50px; 
-            height: 50px; 
-            border: 1px solid #999; 
-            cursor: pointer; 
-        }
-        
-        /* Стан увімкнено/вимкнено */
-        .on { background: #ffd700; } /* Жовтий */
-        .off { background: #eee; }    /* Сірий */
-
-        .info { margin: 10px 0; }
-        #status { font-weight: bold; color: green; margin-top: 15px; }
-        button.reload { margin-top: 20px; padding: 5px 15px; cursor: pointer; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #1a1a1a; color: white; }
+        .grid { display: grid; grid-template-columns: repeat(5, 60px); gap: 10px; margin: 20px 0; }
+        .cell { width: 60px; height: 60px; border-radius: 5px; cursor: pointer; border: none; transition: 0.2s; }
+        .on { background: #f1c40f; box-shadow: 0 0 15px #f1c40f; }
+        .off { background: #2c3e50; }
+        .info { margin: 5px; font-size: 1.2rem; }
+        #status { color: #2ecc71; font-weight: bold; min-height: 1.5em; }
     </style>
 </head>
 <body>
-
-    <h2>Lights On</h2>
-
-    <div class="info">
-        Рівень: <span id="lvl-id"></span> | 
-        Ціль: <span id="target-moves"></span> | 
-        Ходи: <span id="move-count">0</span>
-    </div>
-
-    <div id="game-board"></div>
-
+    <h1>Lights On</h1>
+    <div class="info">Рівень: <span id="lvl-id"></span> | Ціль: <span id="target-moves"></span></div>
+    <div class="info">Ходи: <span id="move-count">0</span></div>
+    <div id="game-board" class="grid"></div>
     <div id="status"></div>
-
-    <button class="reload" onclick="location.reload()">Скинути</button>
+    <button onclick="location.reload()" style="padding: 10px; margin-top: 10px; cursor: pointer;">Інший варіант</button>
 
     <script src="script.js"></script>
 </body>
